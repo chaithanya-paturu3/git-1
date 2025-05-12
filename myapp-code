@@ -1,0 +1,42 @@
+#!/bin/bash
+
+userid=$(id -u)
+
+R="\e[31m"
+G="\e[32m"
+Y="\e[33m"
+BL="\e[34m"
+BOLD="\e[1m"
+
+validate() {
+    if [ $1 -ne 0 ]; then
+        echo -e "${R} $2 ........failure"
+        exit 3
+    else
+        echo -e "${G} $2 ........Success"
+    fi
+}
+variable=[ $? -ne 0 ]
+
+if [ $userid -ne 0 ]; then
+    echo -e "$BL You need sudo access to run this script.${RESET}"
+fi
+
+dnf list installed mysql
+
+if ${variable}; then
+
+    dnf install mysql -y
+    validate $? "Installing mysql"
+else
+    echo -e "${Y} mysql is already ....installed.${RESET}"
+fi
+
+dnf list installed git
+
+if ${variable}; then
+    dnf install git -y
+    if ${variable}; then
+        echo -e "$R Installing git failure.${RESET}"
+    fi
+fi
